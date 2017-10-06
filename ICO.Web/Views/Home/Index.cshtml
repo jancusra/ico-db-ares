@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div id="render-content" class="render-section">
+    <div class="description-text">Vložte IČO z databázy: 27074358, 44992785, 26297850 alebo iné IČO (načíta sa online z ARES)</div>
+    <hr>
+    <span class="input-text">Zadajte IČO:</span>
+    <input id="text-ico" type="text" name="ico" />
+    <button id="submit-ico" type="submit">Potvrdiť</button>
+    <div id="loader" class="loader"></div>
+    <hr>
+
+    <div class="detail-text">Detail</div>
+    <div class="detail-section">
+        <table id="detail-table"></table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var descriptions = ["Obchodná firma", "Kód štátu", "Okres", "Obec", "Ulica", "Domovné číslo", "Orientačné číslo", "PSČ"];
+
+    $("#submit-ico").click(function () {
+        $("#loader").css("display", "inline-block");
+
+        $.get("Home/GetIcoData", { ico: parseInt($("#text-ico").val()) }, function (data) {
+            if (data) {
+                var i = 0, table = $("#detail-table");
+                table.empty();
+
+                Object.keys(data).forEach(function (key) {
+                    table.append("<tr><td class='description'>" + descriptions[i] + ":</td><td>" + data[key] + "</td></tr>");
+                    i += 1;
+                });
+            }
+
+            $("#loader").hide();
+        })
+        .fail(function () {
+            $("#loader").hide();
+        });
+    });
+</script>
